@@ -1,7 +1,7 @@
+import { Grip } from '@gravity-ui/icons';
 import { useStoreState } from 'easy-peasy';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Grip } from '@gravity-ui/icons';
 import useSWR from 'swr';
 import useSWRImmutable from 'swr/immutable';
 import getFilterOptions, { type FilterOptions } from '@/api/getFilterOptions';
@@ -414,24 +414,21 @@ const DashboardContainer = () => {
                         return dashboardMode === 'groups' ? (
                             <GroupSection
                                 servers={sortedItems}
-                    {({ items }) =>
-                        dashboardMode === 'groups' ? (
-                            <GroupSection
-                                servers={items}
                                 displayOption={dashboardMode === 'grid' ? 'grid' : 'list'}
                                 groupFilterId={groupFilterId}
                                 filterActive={filterActive}
                             />
                         ) : sortedItems.length > 0 ? (
-                        ) : items.length > 0 ? (
                             <div
                                 className={
                                     dashboardMode === 'grid' ? 'flex flex-wrap gap-4 max-lg:flex-col max-lg:gap-0' : ''
                                 }
                             >
                                 {sortedItems.map((server, index) => (
+                                    // biome-ignore lint/a11y/noStaticElementInteractions: HTML5 drag-and-drop container
                                     <div
                                         key={`${server.uuid}-${dashboardMode}`}
+                                        role='presentation'
                                         draggable
                                         onDragStart={(e) => handleDragStart(e, server)}
                                         onDragEnd={handleDragEnd}
@@ -439,9 +436,7 @@ const DashboardContainer = () => {
                                         onDragLeave={() => handleDragLeave(server.id)}
                                         onDrop={(e) => handleDrop(e, server, sortedItems)}
                                         className={`transform-gpu skeleton-anim-2 transition-all duration-200 cursor-default ${
-                                            dashboardMode === 'grid'
-                                                ? 'w-[calc(50%-0.5rem)] max-lg:w-full'
-                                                : 'mb-4'
+                                            dashboardMode === 'grid' ? 'w-[calc(50%-0.5rem)] max-lg:w-full' : 'mb-4'
                                         } max-lg:mb-4 ${
                                             draggingServerId === server.id ? 'opacity-40 scale-[0.98]' : ''
                                         } ${
@@ -449,12 +444,6 @@ const DashboardContainer = () => {
                                                 ? 'ring-2 ring-cream-400 rounded-xl bg-mocha-400/40 shadow-lg shadow-cream-500/10'
                                                 : ''
                                         }`}
-                                        className={`transform-gpu skeleton-anim-2 ${dashboardMode === 'grid'
-                                                ? items.length === 1
-                                                    ? 'w-[calc(50%-0.5rem)] max-lg:w-full'
-                                                    : 'w-[calc(50%-0.5rem)] max-lg:w-full'
-                                                : 'mb-4'
-                                            } max-lg:mb-4`}
                                         style={{
                                             animationDelay: `${index * 50 + 50}ms`,
                                             animationTimingFunction:
@@ -480,8 +469,8 @@ const DashboardContainer = () => {
                                     {ownerFilter === 'admin-all'
                                         ? 'There are no other servers to display.'
                                         : ownerFilter === 'all'
-                                            ? 'No Server Shared With your Account'
-                                            : 'There are no servers associated with your account.'}
+                                          ? 'No Server Shared With your Account'
+                                          : 'There are no servers associated with your account.'}
                                 </p>
                                 <h3 className='text-lg font-medium text-zinc-200 mb-2'>
                                     {ownerFilter === 'admin-all' ? 'No other servers found' : 'No servers found'}
